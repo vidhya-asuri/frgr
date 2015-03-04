@@ -6,6 +6,8 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.x = 101*2;
+    this.y = 83*2; 
 }
 
 // Update the enemy's position, required method for game
@@ -14,6 +16,14 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    if(this.x <= 101*5)
+    {
+      this.x = (this.x + 101*1)*dt;
+    }
+    else
+    {
+      this.x = (101*2)*dt;
+    }
 }
 
 // Draw the enemy on the screen, required method for game
@@ -26,12 +36,54 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 
 
+var Player = function() {
+    // Variables applied to each of our instances go here,
+
+    // The image/sprite for our player, this uses
+    // a helper provided to easily load images
+    this.sprite = 'images/char-boy.png';
+}
+
+// Update the player's position, required method for game
+// Parameter: dt, a time delta between ticks
+Player.prototype.update = function() {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    this.y = this.y + 20;
+}
+
+// Draw the enemy on the screen, required method for game
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.handleInput = function(keyCode) {
+   // switch between diff possible key presses.
+   switch(keyCode)
+   {
+     case 37:
+            Console.log("move left");
+     case 38:
+            Console.log("move up");
+     case 39:
+            Console.log("move right");
+     case 40:
+            Console.log("move down");
+     default:
+            Console.log("default case");
+   } 
+    
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
-
-
+var enemyBug = new Enemy();
+var allEnemies = [];
+allEnemies.push(enemyBug);
+var player = new Player();
+ 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
