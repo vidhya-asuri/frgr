@@ -28,6 +28,11 @@ Enemy.prototype.update = function(dt) {
     }
 }
 
+Enemy.prototype.getXY = function() {
+   var enemy_xy = {enemy_x:this.x,enemy_y:this.y};
+   return enemy_xy;
+}
+
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -50,11 +55,15 @@ var Player = function() {
 
 // Update the player's position, required method for game
 // Parameter: dt, a time delta between ticks
-Player.prototype.update = function() {
+Player.prototype.update = function(enemy) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-
+    // get current player coordinates.
+    var player_cur_x = this.x;
+    var player_cur_y = this.y;
+    var enemy_cur = enemy.getXY();
+    
 }
 
 // Draw the enemy on the screen, required method for game

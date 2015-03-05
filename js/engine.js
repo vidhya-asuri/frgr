@@ -94,7 +94,10 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        allEnemies.forEach(function(enemy) {
+            player.update(enemy);
+        });
+        //player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -161,6 +164,9 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        // vid - when boy meets bug, flash a string 'Game Over'
+        // and then reset positions of player and bug to start positions.
+        // 
     }
 
     /* Go ahead and load all of the images we know we're going to need to
