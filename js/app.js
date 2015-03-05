@@ -26,7 +26,6 @@ Enemy.prototype.update = function(dt) {
     {
       this.x = 50;
     }
-    //this.x = 300;
 }
 
 // Draw the enemy on the screen, required method for game
@@ -45,6 +44,8 @@ var Player = function() {
     // The image/sprite for our player, this uses
     // a helper provided to easily load images
     this.sprite = 'images/char-boy.png';
+    this.x = 210;
+    this.y = 410;
 }
 
 // Update the player's position, required method for game
@@ -53,7 +54,7 @@ Player.prototype.update = function() {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.y = this.y + 20;
+
 }
 
 // Draw the enemy on the screen, required method for game
@@ -65,16 +66,49 @@ Player.prototype.handleInput = function(keyCode) {
    // switch between diff possible key presses.
    switch(keyCode)
    {
-     case 37:
-            Console.log("move left");
-     case 38:
-            Console.log("move up");
-     case 39:
-            Console.log("move right");
-     case 40:
-            Console.log("move down");
+     case 'left':
+            if(this.x <= 10)
+            {
+              this.x = 10;
+            }
+            else
+            {
+              this.x = this.x - 100;
+            }
+            break;
+     case 'up':
+            // move up.
+            if(this.y <= 10)
+            {
+              this.y = 10;
+            }
+            else
+            {
+              this.y = this.y - 100;
+            }
+            break;
+     case 'right':
+            if(this.x >= 410)
+            {
+              this.x = 410;
+            }
+            else
+            {
+              this.x = this.x + 100;
+            }
+            break;
+     case 'down':
+            if(this.y >= 410)
+            {
+              this.y = 410;
+            }
+            else
+            {
+              this.y = this.y + 100;
+            }
+            break;
      default:
-            Console.log("default case");
+            break;
    } 
     
 }
@@ -86,6 +120,7 @@ var enemyBug = new Enemy();
 var allEnemies = [];
 allEnemies.push(enemyBug);
 var player = new Player();
+
  
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -96,6 +131,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
