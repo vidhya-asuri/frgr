@@ -74,6 +74,7 @@
      * have been previously loaded. If an image is cached, this functions
      * the same as calling load() on that URL.
      */
+
     function get(url) {
         return resourceCache[url];
     }
