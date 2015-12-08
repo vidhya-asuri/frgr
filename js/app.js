@@ -6,17 +6,13 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-<<<<<<< HEAD
     this.x = 50;
     this.y = 200;
-};
-=======
     /* this.x = 101 * 2;
     this.y = 83*2; */ 
     this.x = 50;
     this.y = 50;
-}
->>>>>>> 4efefa288db3785883fbb8388d405dbb9826bfbb
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -24,27 +20,24 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-<<<<<<< HEAD
     if(dt >= 0){
        this.x = this.x + (this.x*dt);
     }
-};
-=======
     if(this.x <= 400)
     {
       this.x = this.x+(this.x*dt);
     }
     else
     {
+      // enemy bug is at the edge of the canvas. Need to reposition to beginning.
       this.x = 50;
     }
-}
+};
 
 Enemy.prototype.getXY = function() {
    var enemy_xy = {enemy_x:this.x,enemy_y:this.y};
    return enemy_xy;
 }
->>>>>>> 4efefa288db3785883fbb8388d405dbb9826bfbb
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -64,26 +57,39 @@ var Player = function() {
     this.x = 200;
     this.y = 400;
 };
-
+/*
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Player.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-};
 
+    if(dt >= 0){
+       this.y = this.y - (this.y*dt);
+    }
+    if(this.y <= 50)
+    {
+      this.y = 50;
+    }
+    else
+    {
+      // enemy bug is at the edge of the canvas. Need to reposition to beginning.
+      this.y = this.y - (this.y*dt);
+    }
+
+};
+*/
 // Draw the enemy on the screen, required method for game
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 Player.prototype.handleInput = function(key) {
-   
    switch(key){
      case 37:
        // left
-       if(this.x > 20){
+       if(this.x < 20){
          this.x = this.x - 10;
        } 
      case 38:
@@ -117,7 +123,7 @@ var Player = function() {
 
 // Update the player's position, required method for game
 // Parameter: dt, a time delta between ticks
-Player.prototype.update = function(enemy) {
+Player.prototype.update = function(enemy,dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -125,7 +131,6 @@ Player.prototype.update = function(enemy) {
     var player_cur_x = this.x;
     var player_cur_y = this.y;
     var enemy_cur = enemy.getXY();
-    
 }
 
 // Draw the enemy on the screen, required method for game
@@ -187,21 +192,18 @@ Player.prototype.handleInput = function(keyCode) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-<<<<<<< HEAD
 var allEnemies = [];
 var bug =  new Enemy();
 allEnemies.push(bug);
 var player = new Player();
 
 bug.update(); 
-=======
 var enemyBug = new Enemy();
 var allEnemies = [];
 allEnemies.push(enemyBug);
 var player = new Player();
 
  
->>>>>>> 4efefa288db3785883fbb8388d405dbb9826bfbb
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
