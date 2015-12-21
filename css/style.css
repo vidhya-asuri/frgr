@@ -1,3 +1,15 @@
 body {
     text-align: center;
 }
+
+#inPlay{
+ z-index: 3;
+}
+
+
+#resetGame{
+ display: none;
+}
+#score{
+ float: right;
+}
