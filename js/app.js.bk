@@ -1,3 +1,5 @@
+var resetGame= false;
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -6,12 +8,8 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = 50;
-    this.y = 200;
-    /* this.x = 101 * 2;
-    this.y = 83*2; */ 
-    this.x = 50;
-    this.y = 50;
+    this.initialX = 50;
+    this.initialY = 50;
 };
 
 // Update the enemy's position, required method for game
@@ -30,7 +28,12 @@ Enemy.prototype.update = function(dt) {
     else
     {
       // enemy bug is at the edge of the canvas. Need to reposition to beginning.
-      this.x = 50;
+      this.x = this.initialX;
+      // enemy could turn around and come back.
+      //global.ctx.save(); // save current state
+      //global.ctx.rotate(Math.PI); // rotate
+      this.render();
+      //global.ctx.restore(); // restore original states (no rotation etc)
     }
 };
 
@@ -47,69 +50,7 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 400;
-};
-/*
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Player.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-
-    if(dt >= 0){
-       this.y = this.y - (this.y*dt);
-    }
-    if(this.y <= 50)
-    {
-      this.y = 50;
-    }
-    else
-    {
-      // enemy bug is at the edge of the canvas. Need to reposition to beginning.
-      this.y = this.y - (this.y*dt);
-    }
-
-};
-*/
 // Draw the enemy on the screen, required method for game
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-/*Player.prototype.handleInput = function(key) {
-   switch(key){
-     case 37:
-       // left
-       if(this.x < 20){
-         this.x = this.x - 10;
-       } 
-     case 38:
-       // up
-       if(this.y > 20){
-         this.y = this.y - 10;
-       } 
-     case 39:
-       // right 
-       if(this.x < 490){
-         this.x = this.x + 10;
-       } 
-     case 40:
-       // down 
-       if(this.x < 490){
-         this.y = this.y + 10; 
-       }
-   }
-};
-*/
 
 var Player = function() {
     // Variables applied to each of our instances go here,
@@ -117,9 +58,26 @@ var Player = function() {
     // The image/sprite for our player, this uses
     // a helper provided to easily load images
     this.sprite = 'images/char-boy.png';
-    this.x = 210;
-    this.y = 410;
+    this.moveUp = false;
+    this.score = 0;
+    this.lives = 3;
+    this.initialX = 200;
+    this.initialY = 400;
 }
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.setInitialPos = function(initialX,initialY) {
+    // this function sets the initial position for the player. 
+    // ToDo: arguments for x and y could be passed in and could be used to   
+    this.x = initialX;
+    this.y = initialY;
+
+}
+
+
 
 // Update the player's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -131,10 +89,34 @@ Player.prototype.update = function(enemy,dt) {
     var player_cur_x = this.x;
     var player_cur_y = this.y;
     var enemy_cur = enemy.getXY();
-    var enemy_cur_x = enemy_cur.enemey_x;
-    var enemy_cur_y = enemy_cur.enemey_y;
+    var enemy_cur_x = enemy_cur.enemy_x;
+    var enemy_cur_y = enemy_cur.enemy_y;
     // calculate difference between enemy and player positions. 
-     
+    var xdiff = Math.abs(player_cur_x - enemy_cur_x);
+    var ydiff = Math.abs(player_cur_y - enemy_cur_y);
+    
+    // if diff in x positions is less than 10px then the game ends.
+    if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
+    {
+       // reset player and enemy positions.
+       // pop-up with qn
+       resetGame = true;
+       this.lives = this.lives - 1;
+       //var canvas = document.getElementById("inPlay");
+       //canvas.id  = "gameOver"; 
+       //hide the canvas
+       //$('#inPlay').hide();
+       // display dialog informing the user that the game has ended
+       //$("#resetGame").dialog();
+       $('#scoreVal').text(player.getScore());
+       // reset player to initial position.
+       player.setInitalPos(player.initialX, player.initialY);
+       // reset enemy to initial position.
+       enemy.setInitalPos(enemy.initialX, enemy.initialY);
+       //$('#livesLeft').text(player.getLives());
+       console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
+       console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
+    }
 
 }
 
@@ -143,6 +125,9 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+Player.prototype.getScore = function() {
+   return this.score;
+}
 Player.prototype.handleInput = function(keyCode) {
    // switch between diff possible key presses.
    switch(keyCode)
@@ -154,8 +139,9 @@ Player.prototype.handleInput = function(keyCode) {
             }
             else
             {
-              this.x = this.x - 100;
+              this.x = this.x - 25;
             }
+            this.moveUp = false;
             break;
      case 'up':
             // move up.
@@ -165,8 +151,15 @@ Player.prototype.handleInput = function(keyCode) {
             }
             else
             {
-              this.y = this.y - 100;
+              this.y = this.y - 25;
             }
+            this.moveUp = true;
+            if(this.resetGame !== true) 
+            {
+               this.score = this.score + 10;
+            }
+            //var score = this.score;
+            $('#scoreVal').text(player.getScore());
             break;
      case 'right':
             if(this.x >= 410)
@@ -175,8 +168,9 @@ Player.prototype.handleInput = function(keyCode) {
             }
             else
             {
-              this.x = this.x + 100;
+              this.x = this.x + 25;
             }
+            this.moveUp = false;
             break;
      case 'down':
             if(this.y >= 410)
@@ -185,8 +179,9 @@ Player.prototype.handleInput = function(keyCode) {
             }
             else
             {
-              this.y = this.y + 100;
+              this.y = this.y + 25;
             }
+            this.moveUp = false;
             break;
      default:
             break;
@@ -201,12 +196,14 @@ var allEnemies = [];
 var bug =  new Enemy();
 allEnemies.push(bug);
 var player = new Player();
+// set player's initial position.
+player.setInitialPos(200,400);
+var score = player.getScore();
 
 bug.update(); 
 var enemyBug = new Enemy();
 var allEnemies = [];
 allEnemies.push(enemyBug);
-var player = new Player();
 
  
 // This listens for key presses and sends the keys to your

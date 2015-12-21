@@ -104,10 +104,15 @@ Player.prototype.update = function(enemy,dt) {
        //canvas.id  = "gameOver"; 
        //hide the canvas
        //$('#inPlay').hide();
-       // display dialog informing the user that the game has ended
        //$("#resetGame").dialog();
        // reset player and enemy to their initial positions.
+       this.setInitialPos(200,400);
+       enemy.x = 50;
+       enemy.y = 50;
+       // display dialog informing the user that the game has ended
+       $("#resetGame").dialog();
        $('#scoreVal').text(player.getScore());
+       // stop enemy bug position updates.
        //$('#livesLeft').text(player.getLives());
        console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
        console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
