@@ -60,7 +60,9 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.moveUp = false;
     this.score = 0;
-    this.lives = 3;
+    this.lives = 3;  // should be called livesLeft since that is what this represents.
+    this.maxLives = 3;
+    this.startScore = 0;
 }
 
 Player.prototype.render = function() {
@@ -99,21 +101,66 @@ Player.prototype.update = function(enemy,dt) {
        // reset player and enemy positions.
        // pop-up with qn
        resetGame = true;
-       this.lives = this.lives - 1;
-       //var canvas = document.getElementById("inPlay");
-       //canvas.id  = "gameOver"; 
-       //hide the canvas
-       //$('#inPlay').hide();
-       //$("#resetGame").dialog();
        // reset player and enemy to their initial positions.
        this.setInitialPos(200,400);
        enemy.x = 50;
        enemy.y = 50;
        // display dialog informing the user that the game has ended
-       $("#resetGame").dialog();
+       //$("#resetGame").dialog();
+
        $('#scoreVal').text(player.getScore());
+       $('#livesLeft').text(player.getLives());
        // stop enemy bug position updates.
-       //$('#livesLeft').text(player.getLives());
+       // stopping position updates is done in engine.js depending on the value of the global boolean variable resetGame.
+       //The update function in engine.js is does not get called if resetGame is false.
+
+       var livesLeft = player.getLives();
+
+       if( player.getLives() > 0)
+       {
+         player.setLives(player.lives - 1);   
+         $("div#continueGame").dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+              'Continue': function() {
+                 $(this).dialog("close");
+                 resetGame = false; // game has been un-reset, game can go on.
+               },
+               'Quit': function() {
+                 $(this).dialog("close");
+                 resetGame = true; // resetting game because the player wants to quit.  
+               }
+            }
+         });
+ 
+       }
+       
+       if( player.getLives() === 0)
+       {
+          // display dialog - restart game.
+         $("div#continueGame").dialog('close');
+         $("div#restartGame").dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+              'Restart': function() {
+                 $(this).dialog("close");
+                 // reset player lives to 3 since he is restarting the game. 
+                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
+                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
+                 resetGame = false; // game has been un-reset, game can go on.
+               },
+               'Quit': function() {
+               }
+            }
+         });
+
+       }
+ 
+
        console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
        console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
     }
@@ -128,11 +175,40 @@ Player.prototype.render = function() {
 Player.prototype.getScore = function() {
    return this.score;
 }
+
+Player.prototype.getLives = function() {
+   return this.lives;
+}
+
+Player.prototype.setLives = function(lives) {
+   this.lives = lives;
+}
+Player.prototype.setScore = function(score) {
+   this.score = score;
+}
+Player.prototype.getStartScore = function() {
+   return this.startScore;
+}
+Player.prototype.getMaxLives = function() {
+   return this.maxLives;
+}
+
+Player.prototype.dieOnce = function() {
+   if(this.getLives() > 3){
+     player.lives = player.lives - 1;
+     return player.lives;
+   }
+   else
+      return 99;  
+}
+
 Player.prototype.handleInput = function(keyCode) {
    // switch between diff possible key presses.
-   switch(keyCode)
-   {
-     case 'left':
+   if(resetGame === false){
+
+     switch(keyCode)
+     {
+       case 'left':
             if(this.x <= 10)
             {
               this.x = 10;
@@ -143,7 +219,7 @@ Player.prototype.handleInput = function(keyCode) {
             }
             this.moveUp = false;
             break;
-     case 'up':
+       case 'up':
             // move up.
             if(this.y <= 10)
             {
@@ -158,10 +234,9 @@ Player.prototype.handleInput = function(keyCode) {
             {
                this.score = this.score + 10;
             }
-            //var score = this.score;
             $('#scoreVal').text(player.getScore());
             break;
-     case 'right':
+       case 'right':
             if(this.x >= 410)
             {
               this.x = 410;
@@ -172,7 +247,7 @@ Player.prototype.handleInput = function(keyCode) {
             }
             this.moveUp = false;
             break;
-     case 'down':
+       case 'down':
             if(this.y >= 410)
             {
               this.y = 410;
@@ -183,8 +258,9 @@ Player.prototype.handleInput = function(keyCode) {
             }
             this.moveUp = false;
             break;
-     default:
+       default:
             break;
+     }
    } 
     
 }

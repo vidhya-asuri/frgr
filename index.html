@@ -12,12 +12,23 @@
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
-      <div id="resetGame" title="Game Over!">
-        <p>Sorry, this game is over. </p>
-      </div>
+
+      <!-- <div id="resetGame" title="Game Over!">
+        <p id="gameOverMsg"> Sorry, this game is over. </p>
+      </div> -->
+
       <div id="score" title="Score">
-        <p> This is your score</p>
+        <p> Score: </p>
         <p id="scoreVal"></p>
+        <p> Lives left: </p>
+        <p id="livesLeft"></p>
+      </div>
+
+      <div id="continueGame" title="Continue Game?">
+        <span id="gameContinueMsg"> You still have lives left. Would you like to continue? </span>
+      </div>
+      <div id="restartGame" title="Restart Game?">
+        <span id="gameRestartMsg"> Game over!. Would you like to restart? </span>
       </div>
 
 

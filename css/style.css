@@ -7,9 +7,17 @@ body {
 }
 
 
+#restartGame{
+ display: none;
+}
 #resetGame{
  display: none;
 }
-#score{
+
+#continueGame{
+ display: none;
+}
+
+#score {
  float: right;
 }

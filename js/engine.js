@@ -29,7 +29,7 @@ var Engine = (function(global) {
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
-    $("#resetGame").hide();
+
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -100,7 +100,6 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             player.update(enemy,dt);
         });
-        //player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -159,6 +158,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+        $("#livesLeft").text(player.getLives());
     }
 
     /* This function does nothing but it could have been a good place to
