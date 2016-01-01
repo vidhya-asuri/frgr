@@ -143,20 +143,16 @@ Player.prototype.update = function(enemy,dt) {
     // calculate difference between enemy and player positions. 
     var xdiff = Math.abs(player_cur_x - enemy_cur_x);
     var ydiff = Math.abs(player_cur_y - enemy_cur_y);
-    var qg = this.getQuitGame(); 
     // if diff in x positions is less than 10px then the game ends.
     //if((xdiff <= 10) && (ydiff <=10)  && (qg === false) ) 
     if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
     {
        // reset player and enemy positions.
        // pop-up with qn
-       resetGame = true;
        // reset player and enemy to their initial positions.
        this.setInitialPos(200,400);
        enemy.x = 50;
        enemy.y = 50;
-       // display dialog informing the user that the game has ended
-       //$("#resetGame").dialog();
 
        $('#scoreVal').text(this.getScore());
        $('#livesLeft').text(this.getLives());
@@ -164,6 +160,7 @@ Player.prototype.update = function(enemy,dt) {
        // stopping position updates is done in engine.js depending on the value of the global boolean variable resetGame.
        //The update function in engine.js is does not get called if resetGame is false.
 
+       resetGame = true;
        pauseScore = true;
        if( this.getLives() > 0)
        {
@@ -173,21 +170,17 @@ Player.prototype.update = function(enemy,dt) {
             modal: true,
             buttons: {
               'Continue': function() {
-                 player.setLives(player.getLives() - 1);   
-                 player.setScore(player.getScore()); // need to make number-of-lives a member variable of player 
-                 /*player.setQuitGame(false); // need to make number-of-lives a member variable of player 
-                 player.setContinueGame(true); // need to make number-of-lives a member variable of player 
-                 player.setPauseUpdate(true);*/
+                 $('#scoreVal').text(player.getScore());
                  resetGame = false; // resetting game because the player wants to quit. 
                  pauseScore = false; 
+                 player.setLives(player.getLives() -1);
+                 $('#livesLeft').text(player.getLives());
                  $(this).dialog("close");
                },
                'Quit': function() {
-                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
-                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
-                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
-                 player.setContinueGame(false); // need to make number-of-lives a member variable of player */ 
-                 resetGame = false; // resetting game because the player wants to quit.  
+                 player.setLives(player.getMaxLives());
+                 player.setScore(player.getStartScore());
+                 resetGame = false; // resetting game because the player wants to quit. 
                  pauseScore = false; 
                  $('#scoreVal').text(player.getStartScore());
                  $('#livesLeft').text(player.getMaxLives());
@@ -208,22 +201,19 @@ Player.prototype.update = function(enemy,dt) {
             modal: true,
             buttons: {
               'Restart': function() {
-                 $(this).dialog("close");
-                 // reset player lives to 3 since he is restarting the game. 
+                 resetGame = false; // resetting game because the player wants to quit.  
+                 pauseScore = false; 
                  player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
                  player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
-                 resetGame = false; // game has been un-reset, game can go on.
-                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
-                 player.setContinueGame(false); // need to make number-of-lives a member variable of player 
-                 player.setPauseUpdate(true); */
-                 pauseScore = false; 
+                 $('#scoreVal').text(player.getStartScore());
+                 $('#livesLeft').text(player.getMaxLives());
                  $(this).dialog("close");
                },
                'Quit': function() {
                  player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
                  player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
-                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
-                 player.setContinueGame(false); // need to make number-of-lives a member variable of player */ 
+                 $('#scoreVal').text(player.getStartScore());
+                 $('#livesLeft').text(player.getMaxLives());
                  resetGame = false; // resetting game because the player wants to quit.  
                  pauseScore = false; 
                  $(this).dialog("close");
@@ -232,8 +222,6 @@ Player.prototype.update = function(enemy,dt) {
          });
 
        }
- 
-
        console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
        console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
     }
