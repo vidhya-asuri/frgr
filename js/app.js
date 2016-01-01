@@ -1,4 +1,5 @@
 var resetGame= false;
+var pauseScore= false;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -11,6 +12,7 @@ var Enemy = function() {
     this.x = 50;
     this.y = 50;
 };
+
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -63,10 +65,37 @@ var Player = function() {
     this.lives = 3;  // should be called livesLeft since that is what this represents.
     this.maxLives = 3;
     this.startScore = 0;
+    this.quitGame = false; //player wants to quit game if quitGame is true. The game has to be reset to start, lives 
+    // should be set to maxLives, startScore should be set to 0. Player and enemy bug need to be placed in initial start position.
+    this.continueGame = true; //player wants to continue game 
+    this.pauseUpdate = false; //player wants to continue game 
 }
+
+Player.prototype.setPauseUpdate = function(toPause) {
+  this.pauseUpdate = toPause;   
+};
+
+Player.prototype.getPauseUpdate = function() {
+  return this.pauseUpdate;   
+};
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.setContinueGame = function(toContinue) {
+  this.continueGame = toContinue;   
+};
+Player.prototype.getContinueGame = function() {
+  return this.continueGame;   
+};
+
+Player.prototype.setQuitGame = function(toQuitOrNotToQuit) {
+  this.quitGame = toQuitOrNotToQuit;   
+};
+
+Player.prototype.getQuitGame = function() {
+  return this.quitGame;   
 };
 
 Player.prototype.setInitialPos = function(initialX,initialY) {
@@ -76,102 +105,6 @@ Player.prototype.setInitialPos = function(initialX,initialY) {
     this.y = initialY;
 
 }
-
-
-
-// Update the player's position, required method for game
-// Parameter: dt, a time delta between ticks
-Player.prototype.update = function(enemy,dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    // get current player coordinates.
-    var player_cur_x = this.x;
-    var player_cur_y = this.y;
-    var enemy_cur = enemy.getXY();
-    var enemy_cur_x = enemy_cur.enemy_x;
-    var enemy_cur_y = enemy_cur.enemy_y;
-    // calculate difference between enemy and player positions. 
-    var xdiff = Math.abs(player_cur_x - enemy_cur_x);
-    var ydiff = Math.abs(player_cur_y - enemy_cur_y);
-    
-    // if diff in x positions is less than 10px then the game ends.
-    if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
-    {
-       // reset player and enemy positions.
-       // pop-up with qn
-       resetGame = true;
-       // reset player and enemy to their initial positions.
-       this.setInitialPos(200,400);
-       enemy.x = 50;
-       enemy.y = 50;
-       // display dialog informing the user that the game has ended
-       //$("#resetGame").dialog();
-
-       $('#scoreVal').text(player.getScore());
-       $('#livesLeft').text(player.getLives());
-       // stop enemy bug position updates.
-       // stopping position updates is done in engine.js depending on the value of the global boolean variable resetGame.
-       //The update function in engine.js is does not get called if resetGame is false.
-
-       var livesLeft = player.getLives();
-
-       if( player.getLives() > 0)
-       {
-         player.setLives(player.lives - 1);   
-         $("div#continueGame").dialog({
-            resizable: false,
-            height:140,
-            modal: true,
-            buttons: {
-              'Continue': function() {
-                 $(this).dialog("close");
-                 resetGame = false; // game has been un-reset, game can go on.
-               },
-               'Quit': function() {
-                 $(this).dialog("close");
-                 resetGame = true; // resetting game because the player wants to quit.  
-               }
-            }
-         });
- 
-       }
-       
-       if( player.getLives() === 0)
-       {
-          // display dialog - restart game.
-         $("div#continueGame").dialog('close');
-         $("div#restartGame").dialog({
-            resizable: false,
-            height:140,
-            modal: true,
-            buttons: {
-              'Restart': function() {
-                 $(this).dialog("close");
-                 // reset player lives to 3 since he is restarting the game. 
-                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
-                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
-                 resetGame = false; // game has been un-reset, game can go on.
-               },
-               'Quit': function() {
-               }
-            }
-         });
-
-       }
- 
-
-       console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
-       console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
-    }
-
-}
-
-// Draw the enemy on the screen, required method for game
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
-
 Player.prototype.getScore = function() {
    return this.score;
 }
@@ -193,6 +126,125 @@ Player.prototype.getMaxLives = function() {
    return this.maxLives;
 }
 
+
+
+// Update the player's position, required method for game
+// Parameter: dt, a time delta between ticks
+Player.prototype.update = function(enemy,dt) {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    // get current player coordinates.
+    var player_cur_x = this.x;
+    var player_cur_y = this.y;
+    var enemy_cur = enemy.getXY();
+    var enemy_cur_x = enemy_cur.enemy_x;
+    var enemy_cur_y = enemy_cur.enemy_y;
+    // calculate difference between enemy and player positions. 
+    var xdiff = Math.abs(player_cur_x - enemy_cur_x);
+    var ydiff = Math.abs(player_cur_y - enemy_cur_y);
+    var qg = this.getQuitGame(); 
+    // if diff in x positions is less than 10px then the game ends.
+    //if((xdiff <= 10) && (ydiff <=10)  && (qg === false) ) 
+    if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
+    {
+       // reset player and enemy positions.
+       // pop-up with qn
+       resetGame = true;
+       // reset player and enemy to their initial positions.
+       this.setInitialPos(200,400);
+       enemy.x = 50;
+       enemy.y = 50;
+       // display dialog informing the user that the game has ended
+       //$("#resetGame").dialog();
+
+       $('#scoreVal').text(this.getScore());
+       $('#livesLeft').text(this.getLives());
+       // stop enemy bug position updates.
+       // stopping position updates is done in engine.js depending on the value of the global boolean variable resetGame.
+       //The update function in engine.js is does not get called if resetGame is false.
+
+       pauseScore = true;
+       if( this.getLives() > 0)
+       {
+         $("div#continueGame").dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+              'Continue': function() {
+                 player.setLives(player.getLives() - 1);   
+                 player.setScore(player.getScore()); // need to make number-of-lives a member variable of player 
+                 /*player.setQuitGame(false); // need to make number-of-lives a member variable of player 
+                 player.setContinueGame(true); // need to make number-of-lives a member variable of player 
+                 player.setPauseUpdate(true);*/
+                 resetGame = false; // resetting game because the player wants to quit. 
+                 pauseScore = false; 
+                 $(this).dialog("close");
+               },
+               'Quit': function() {
+                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
+                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
+                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
+                 player.setContinueGame(false); // need to make number-of-lives a member variable of player */ 
+                 resetGame = false; // resetting game because the player wants to quit.  
+                 pauseScore = false; 
+                 $('#scoreVal').text(player.getStartScore());
+                 $('#livesLeft').text(player.getMaxLives());
+                 $(this).dialog("close");
+               }
+            }
+         });
+ 
+       }
+       
+       if( this.getLives() === 0)
+       {
+          // display dialog - restart game.
+         $("div#continueGame").dialog('close');
+         $("div#restartGame").dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+              'Restart': function() {
+                 $(this).dialog("close");
+                 // reset player lives to 3 since he is restarting the game. 
+                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
+                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
+                 resetGame = false; // game has been un-reset, game can go on.
+                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
+                 player.setContinueGame(false); // need to make number-of-lives a member variable of player 
+                 player.setPauseUpdate(true); */
+                 pauseScore = false; 
+                 $(this).dialog("close");
+               },
+               'Quit': function() {
+                 player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
+                 player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
+                 /*player.setQuitGame(true); // need to make number-of-lives a member variable of player 
+                 player.setContinueGame(false); // need to make number-of-lives a member variable of player */ 
+                 resetGame = false; // resetting game because the player wants to quit.  
+                 pauseScore = false; 
+                 $(this).dialog("close");
+               }
+            }
+         });
+
+       }
+ 
+
+       console.log("xdiff:  " + xdiff + " " + "ydiff:  " + ydiff  + "\n");  
+       console.log("enemy-x:  " + enemy_cur_x + " " + "player-x:  " + player_cur_x ); 
+    }
+
+}
+
+// Draw the enemy on the screen, required method for game
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 Player.prototype.dieOnce = function() {
    if(this.getLives() > 3){
      player.lives = player.lives - 1;
@@ -204,7 +256,8 @@ Player.prototype.dieOnce = function() {
 
 Player.prototype.handleInput = function(keyCode) {
    // switch between diff possible key presses.
-   if(resetGame === false){
+   //if((this.getQuitGame() === false) || (this.getContinueGame() === true)){
+   if( resetGame === false){
 
      switch(keyCode)
      {
@@ -230,7 +283,8 @@ Player.prototype.handleInput = function(keyCode) {
               this.y = this.y - 25;
             }
             this.moveUp = true;
-            if(this.resetGame !== true) 
+            if(pauseScore === false) 
+            //if(this.resetGame !== true) 
             {
                this.score = this.score + 10;
             }
@@ -276,10 +330,6 @@ var player = new Player();
 player.setInitialPos(200,400);
 var score = player.getScore();
 
-bug.update(); 
-var enemyBug = new Enemy();
-var allEnemies = [];
-allEnemies.push(enemyBug);
 
  
 // This listens for key presses and sends the keys to your
