@@ -1,5 +1,6 @@
 var resetGame= false;
-var pauseScore= false;
+//var pauseScore= false;
+//var hasWon = false;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -16,14 +17,15 @@ var Enemy = function() {
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
+/*
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if(dt >= 0){
+    /*if(dt >= 0){
        this.x = this.x + (this.x*dt);
-    }
-    if(this.x <= 400)
+    } */
+/*    if( (dt >= 0) && (this.x <= 400) )
     {
       this.x = this.x+(this.x*dt);
     }
@@ -37,7 +39,26 @@ Enemy.prototype.update = function(dt) {
       this.render();
       ctx.restore(); // restore original states (no rotation etc)
     }
-};
+}; 
+*/
+
+Enemy.prototype.update = function(dt) {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    if( dt >= 0 )
+    {
+      if(this.x <= 500)
+      {
+        this.x = this.x+( 150 *dt);
+      }
+      else
+      {
+        this.x = -(Math.random() * 400);
+      }
+    }
+}; 
+
 
 Enemy.prototype.getXY = function() {
    var enemy_xy = {enemy_x:this.x,enemy_y:this.y};
@@ -127,6 +148,35 @@ Player.prototype.getMaxLives = function() {
 }
 
 
+Player.prototype.hasWon = function() {
+    if(player.y <= 10 )
+    {
+         player.setInitialPos(200,400);
+         resetGame = true;
+         $("div#wonGame").dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+              'PlayAgain': function() {
+                 resetGame = false;
+                 player.setLives(player.getMaxLives());
+                 player.setScore(player.getStartScore());
+                 $('#scoreVal').text(player.getScore());
+                 $('#livesLeft').text(player.getLives());
+                 $(this).dialog("close");
+               },
+               'Quit': function() {
+                 player.setLives(player.getMaxLives());
+                 player.setScore(player.getStartScore());
+                 $('#scoreVal').text(player.getStartScore());
+                 $('#livesLeft').text(player.getMaxLives());
+                 $(this).dialog("close");
+               }
+            }
+         });
+    }
+}
 
 // Update the player's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -135,8 +185,8 @@ Player.prototype.update = function(enemy,dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     // get current player coordinates.
-    var player_cur_x = this.x;
-    var player_cur_y = this.y;
+    var player_cur_x = player.x;
+    var player_cur_y = player.y;
     var enemy_cur = enemy.getXY();
     var enemy_cur_x = enemy_cur.enemy_x;
     var enemy_cur_y = enemy_cur.enemy_y;
@@ -144,8 +194,9 @@ Player.prototype.update = function(enemy,dt) {
     var xdiff = Math.abs(player_cur_x - enemy_cur_x);
     var ydiff = Math.abs(player_cur_y - enemy_cur_y);
     // if diff in x positions is less than 10px then the game ends.
-    //if((xdiff <= 10) && (ydiff <=10)  && (qg === false) ) 
-    if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
+    //if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) ) 
+    if((xdiff <= 10) && (ydiff <=10) ) 
+    //if((xdiff <= 10) && (ydiff <=10)  && (resetGame === false) && (hasWon === false) ) 
     {
        // reset player and enemy positions.
        // pop-up with qn
@@ -161,9 +212,10 @@ Player.prototype.update = function(enemy,dt) {
        //The update function in engine.js is does not get called if resetGame is false.
 
        resetGame = true;
-       pauseScore = true;
-       if( this.getLives() > 0)
+       if( player.getLives() > 0)
        {
+                 player.setLives(player.getLives() -1);
+                 $('#livesLeft').text(player.getLives());
          $("div#continueGame").dialog({
             resizable: false,
             height:140,
@@ -172,16 +224,14 @@ Player.prototype.update = function(enemy,dt) {
               'Continue': function() {
                  $('#scoreVal').text(player.getScore());
                  resetGame = false; // resetting game because the player wants to quit. 
-                 pauseScore = false; 
-                 player.setLives(player.getLives() -1);
-                 $('#livesLeft').text(player.getLives());
+                 //player.setLives(player.getLives() -1);
+                 //$('#livesLeft').text(player.getLives());
                  $(this).dialog("close");
                },
                'Quit': function() {
                  player.setLives(player.getMaxLives());
                  player.setScore(player.getStartScore());
-                 resetGame = false; // resetting game because the player wants to quit. 
-                 pauseScore = false; 
+                 //resetGame = false; // resetting game because the player wants to quit. 
                  $('#scoreVal').text(player.getStartScore());
                  $('#livesLeft').text(player.getMaxLives());
                  $(this).dialog("close");
@@ -202,7 +252,6 @@ Player.prototype.update = function(enemy,dt) {
             buttons: {
               'Restart': function() {
                  resetGame = false; // resetting game because the player wants to quit.  
-                 pauseScore = false; 
                  player.setLives(player.getMaxLives()); // need to make number-of-lives a member variable of player 
                  player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
                  $('#scoreVal').text(player.getStartScore());
@@ -214,8 +263,6 @@ Player.prototype.update = function(enemy,dt) {
                  player.setScore(player.getStartScore()); // need to make number-of-lives a member variable of player 
                  $('#scoreVal').text(player.getStartScore());
                  $('#livesLeft').text(player.getMaxLives());
-                 resetGame = false; // resetting game because the player wants to quit.  
-                 pauseScore = false; 
                  $(this).dialog("close");
                }
             }
@@ -245,6 +292,10 @@ Player.prototype.dieOnce = function() {
 Player.prototype.handleInput = function(keyCode) {
    // switch between diff possible key presses.
    //if((this.getQuitGame() === false) || (this.getContinueGame() === true)){
+    var player_cur_x = player.x;
+    var player_cur_y = player.y;
+       console.log("player x:  " + player_cur_x +  "\n");  
+       console.log("player y:  " + player_cur_y ); 
    if( resetGame === false){
 
      switch(keyCode)
@@ -271,7 +322,7 @@ Player.prototype.handleInput = function(keyCode) {
               this.y = this.y - 25;
             }
             this.moveUp = true;
-            if(pauseScore === false) 
+            //if( (pauseScore === false) && (hasWon === false) )
             //if(this.resetGame !== true) 
             {
                this.score = this.score + 10;
