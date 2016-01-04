@@ -7,6 +7,9 @@ body {
 }
 
 
+#wonGame{
+ display: none;
+}
 #restartGame{
  display: none;
 }
