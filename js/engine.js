@@ -40,8 +40,10 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
+        /*var now = Date.now(),
+            dt = (now - lastTime) / 1000.0; */
         var now = Date.now(),
-            dt = (now - lastTime) / 1000.0;
+            dt = (now - lastTime)/500; 
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
@@ -159,7 +161,10 @@ var Engine = (function(global) {
         });
 
         player.render();
+        //princessGirl.render();
         $("#livesLeft").text(player.getLives());
+        $("#scoreVal").text(player.getScore());
+        $("#numWins").text(player.getNumWins());
     }
 
     /* This function does nothing but it could have been a good place to
@@ -183,7 +188,8 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/char-cat-girl.png'
+        'images/char-cat-girl.png',
+        'images/char-princess-girl.png'
     ]);
     Resources.onReady(init);
 
