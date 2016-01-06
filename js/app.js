@@ -165,13 +165,13 @@ Player.prototype.getNumWins = function() {
 
 // This function determines if the player has won- reached the water.
 Player.prototype.hasWon = function() {
-    if (player.y <= 10) {
+    if (this.y <= 10) {
         //if player's y coordinate is less than 10, he is considered to have reached the water. 
-        player.setInitialPos(200, 400);
+        this.setInitialPos(200, 400);
         // place player in his start/initial position.
-        player.setNumWins(player.getNumWins() + 1);
+        this.setNumWins(this.getNumWins() + 1);
         // increase player's number of wins by 1.
-        $("#numWins").text(player.getNumWins());
+        $("#numWins").text(this.getNumWins());
         // update UI with number of wins.
         //resetGame = true;  // when reset game is true, enemy and player movements are temporarily paused/disabled.
         // Animate a star indicating the player has won once i.e. reached the water once.
@@ -199,7 +199,7 @@ Player.prototype.update = function(enemy, dt) {
     // if diff in x or y positions of enemy and player is less than 50px then the game ends.
     if (Math.max(xdiff, ydiff) <= 50) {
         // reset player and enemy to their initial positions because player has lost a life.
-        player.setInitialPos(200, 400);
+        this.setInitialPos(200, 400);
         enemy.x = 50;
         enemy.y = 50;
         catGirl.x = 200;
@@ -211,17 +211,18 @@ Player.prototype.update = function(enemy, dt) {
         // stopping position updates is done in engine.js depending on the value of the global boolean variable resetGame.
         //The update function in engine.js is does not get called if resetGame is false.
         resetGame = true;
-        if (player.getLives() > 0) {
+        if (this.getLives() > 0) {
             // player still has lives left
             // player and enemy bug have been placed in their initial position. 
-            player.setLives(player.getLives() - 1);
-            $("#livesLeft").text(player.getLives());
+            this.setLives(this.getLives() - 1);
+            $("#livesLeft").text(this.getLives());
             resetGame = false;
         }
         if (this.getLives() === 0) {
             resetGame = true;
             // player has lost all lives 
             // display dialog - restart game.
+            var thePlayer = this;
             $("div#restartGame").dialog({
                 resizable: false,
                 height: 140,
@@ -231,23 +232,23 @@ Player.prototype.update = function(enemy, dt) {
                         resetGame = false;
                         // resetGame is set to false so game can continue. handleInput and enemy position updates
                         // dont happen when resetGame is true.  
-                        player.setLives(player.getMaxLives());
+                        thePlayer.setLives(thePlayer.getMaxLives());
                         // reset number of lives for player to max (3 lives) 
-                        player.setScore(player.getStartScore());
+                        thePlayer.setScore(thePlayer.getStartScore());
                         // reset score to zero because game is restarting. 
-                        $("#scoreVal").text(player.getStartScore());
+                        $("#scoreVal").text(thePlayer.getStartScore());
                         // update UI with score.
-                        $("#livesLeft").text(player.getMaxLives());
+                        $("#livesLeft").text(thePlayer.getMaxLives());
                         // update UI with number of lives.
                         $(this).dialog("close");
                     },
                     Quit: function() {
-                        player.setLives(player.getMaxLives());
+                        thePlayer.setLives(thePlayer.getMaxLives());
                         //  
-                        player.setScore(player.getStartScore());
+                        thePlayer.setScore(thePlayer.getStartScore());
                         //  
-                        $("#scoreVal").text(player.getStartScore());
-                        $("#livesLeft").text(player.getMaxLives());
+                        $("#scoreVal").text(thePlayer.getStartScore());
+                        $("#livesLeft").text(thePlayer.getMaxLives());
                         $("#playAgain").show("slow");
                         $(this).dialog("close");
                     }
@@ -286,7 +287,7 @@ Player.prototype.handleInput = function(keyCode) {
                 this.y = this.y - 25;
             }
             this.score = this.score + 10;
-            $("#scoreVal").text(player.getScore());
+            $("#scoreVal").text(this.getScore());
             break;
 
           case "right":
@@ -303,8 +304,10 @@ Player.prototype.handleInput = function(keyCode) {
             } else {
                 this.y = this.y + 25;
             }
-            this.score = this.score - 5;
-            $("#scoreVal").text(player.getScore());
+            if(this.score > 0){
+                this.score = this.score - 5;
+            }
+            $("#scoreVal").text(this.getScore());
             break;
 
           default:

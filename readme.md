@@ -18,7 +18,7 @@ This is my implementation of the classic arcade game Frogger.The game has one pl
 
 **What happens when player loses all 3 lives:** JQuery dialog is displayed leting the player know that he has no more lives left; prompts the user to choose whether he wants to restart the game or quit.
 
-**What happens player chooses Quit in the dialog boxes presented to him:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0.
+**What happens player chooses Quit in the dialog boxes presented to him:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0. A button with the text 'Play Again' appears on the right of the screen. Clicking this button allows the player to move and restarts the game.
 
 **What happens player chooses Restart button after he has lost all three lives:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0.
 
