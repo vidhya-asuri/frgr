@@ -227,6 +227,15 @@ Player.prototype.update = function(enemy, dt) {
                 resizable: false,
                 height: 140,
                 modal: true,
+                close: function() {
+                        thePlayer.setLives(thePlayer.getMaxLives());
+                        //  
+                        thePlayer.setScore(thePlayer.getStartScore());
+                        //  
+                        $("#scoreVal").text(thePlayer.getStartScore());
+                        $("#livesLeft").text(thePlayer.getMaxLives());
+                        $("#playAgain").show("slow");
+                },
                 buttons: {
                     Restart: function() {
                         resetGame = false;
