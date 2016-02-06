@@ -188,8 +188,8 @@ Player.prototype.update = function(enemy, dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     // get current player coordinates.
-    var player_cur_x = player.x;
-    var player_cur_y = player.y;
+    var player_cur_x = this.x;
+    var player_cur_y = this.y;
     var enemy_cur = enemy.getXY();
     var enemy_cur_x = enemy_cur.enemy_x;
     var enemy_cur_y = enemy_cur.enemy_y;
