@@ -2,6 +2,11 @@
 This is my implementation of the classic arcade game Frogger.The game has one player who has to dodge an enemy bug and a CatGirl to get across the canvas to the water.Game restarts automatically when player has reached water and still has lives left.  Player and enemies get reset to starting positions every time player reaches water.
 
 #### Game information
+
+**How to start the game:**  Load index.html to start the game.
+
+**What "moves" you (the player):**  Use the arrow keys - player moves in the direction of the arrow keys.
+
 **Number of players:** 1
 
 **Number of lives for player:** 3
@@ -18,7 +23,6 @@ This is my implementation of the classic arcade game Frogger.The game has one pl
 
 **What happens when player loses all 3 lives:** JQuery dialog is displayed leting the player know that he has no more lives left; prompts the user to choose whether he wants to restart the game or quit.
 
-**What happens player chooses Quit in the dialog boxes presented to him:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0. A button with the text 'Play Again' appears on the right of the screen. Clicking this button allows the player to move and restarts the game.
+**What happens when player chooses Quit in the dialog boxes presented to him:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0. A button with the text 'Play Again' appears on the right of the screen. Clicking this button allows the player to move and restarts the game.
 
 **What happens player chooses Restart button after he has lost all three lives:** Score gets reset to 0, Number of lives gets reset to 3 (max lives), Number of Wins gets reset to 0.
-
